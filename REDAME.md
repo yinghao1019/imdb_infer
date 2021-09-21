@@ -1,75 +1,35 @@
 <h1 aling="left">Imdb_infer</h1>
-<p >Imdb_prac is a nlp ai project tha can use google cloud Vertex AI to training.</p>
+<p >Imdb_infer is a nlp ai project for deploy to torch model server.</p>
 
 ## **Project Articture**
-### **Main part & flow**
- ![Repo](https://i.imgur.com/3n6ImYg.jpg)
+### **torchserve user guide**
+ ![Repo](https://i.imgur.com/FeYw5Y0.jpg)
 
-* Generate : Prepare clean data in csv format & trained tokenizer before training Model.If you don't have any file, this will be required.
+Before you create your model prediction API on torch server.you should prepare three files :
+imdb_handler,trained Model,Model handler.  And run **torch-model-archiver** to packaging three
+files to **"*.mar"** file.Finally, put TorchServe in the .mar file and deploy it after registration!
+If you want to know more,please follow this [link](https://pytorch.org/serve/)!
 
-* Train Pipe : The training model's core part.Contain Normalize(remove conse、html、punctucation,lower case)
-                ,Preprocess(NER,BPE encoding),Postprocess(Padding sequence,convert idx).
+* imdb_handler : use to handle data to model's input format for server recieved request.
+                 Need text process fun in text module
 
-* Cloud Storage : This will used for store trained model,tokenizer,data,deploy model to serve prediction.
+* Trained Model : the model file for get request predictions.
 
-### **Module & Feature Articture**
-```bash
-|
-|
-+---imdb_prac
-|   |   settings.py
-|   |   task.py
-|   |   utils.py
-|   |
-|   +---models
-|   |   |   hsrnn.py
-|   |
-|   +---process
-|   |   |   data.py
-|   |   |   generate.py
-|   |   |   text.py
-|   |
-|   +---trainer
-|   |   |   pipeline.py
-|   |
-|   |
-
-```
-* models : The model articture which use rnn,inner-attention,softmax.
-
-* process :
-    * Data : used to build training model dataset,iterator with pytorch format.
-    * text : Contain process text function,like remove html tag,extract & tokenize text.
-    * generate : Used to train tokenizer & clean rwa file to csv.
-
-* trainer : pipeline is training model flow,include Amp training,learning rate schedular,Gradient Normalizer.
-
-* Other :
-    * task : Training model entrypoint.You can use optional arg to adjust training model flow.
-    * utils/settings : Extract specific env values,Model metrics func,and project log settings.
-
-
-### **Model Articture**
-![Model](https://i.imgur.com/Ktk23tj.jpg)
-
-* Main articture :We use two level encoder to extract feature.So in the first step,must split whole text to each sent.In addition,also use NER tagger to extract linguistic feature.And we concat it over embed feature.At sent level encoder,we use it to extract each sent context feature,and in Document level encoder,we convert seq of sent context to one vector for after fully connected layer.
-
-* Encoder block : use to stack rnn layer to extract and combine it into context.
-
-Refernce : The model design concept is reference to https://arxiv.org/abs/1811.00706.
+* Model handler : The maintain model compute arcticture.
 
 
 ### **Built with**
 * pytorch
-* GCP storage api
-* spacy
+* GCP Vertex api
+* torchserve
 
 <h1 aling="left">Getting started</h1>
 
 #### **Prerequisites**
-* IMDB sentiment dataset
+* Trained model
 * Google cloud sdk
 * pytorch
+
 #### **Installation**
 
 1. clone this repository
